@@ -1,0 +1,62 @@
+---
+title: 'CREATE: Visualization Project'
+author: "Charles Lang"
+date: "March 29, 2016"
+output: html_document
+---
+#Setup
+```{r, echo=TRUE}
+#Libraries
+library(foreign)
+library(tidyr)
+library(dplyr)
+library(corrgram)
+
+#Upload Pre-Post Data
+PREPOST <- as.data.frame(read.spss("BIS_Spring2014_8.15.14.sav"))
+
+#Upload game viz data
+V1 <- read.csv("C2L3processed.csv")
+V1$chapter <- 2
+V1$level <- 3
+V2 <- read.csv("C2L5processed.csv")
+V2$chapter <- 2
+V2$level <- 5
+V3 <- read.csv("C2L6processed.csv")
+V3$chapter <- 2
+V3$level <- 6
+V4 <- read.csv("C2L7processed.csv")
+V4$chapter <- 2
+V4$level <- 7
+V5 <- read.csv("C3L3processed.csv")
+V5$chapter <- 2
+V5$level <- 5
+
+VIZ <- dplyr::bind_rows(V1,V2,V3,V4,V5)
+
+#Subset variables
+PREPOST <- dplyr::select(PREPOST, ID, PreGeoSum, PostGeoSum, PrePostGeoGain)
+
+#Merge Viz data with Pre-Post
+D1 <- dplyr::inner_join(PREPOST, VIZ, by = "ID")
+
+```
+#Correlations
+
+```{r}
+COR <- D1
+COR$ID <- NULL
+COR$
+
+#Correlogram
+corrgram(COR, order=TRUE, lower.panel=panel.ellipse,
+  upper.panel=panel.pts, text.panel=panel.txt,
+  diag.panel=panel.minmax) 
+
+```
+
+
+```{r}
+
+```
+
