@@ -11,6 +11,7 @@ library(foreign)
 library(tidyr)
 library(dplyr)
 library(corrgram)
+library(ggplot2)
 
 #Upload Pre-Post Data
 PREPOST <- as.data.frame(read.spss("BIS_Spring2014_8.15.14.sav"))
@@ -29,7 +30,7 @@ V4 <- read.csv("C2L7processed.csv")
 V4$chapter <- 2
 V4$level <- 7
 V5 <- read.csv("C3L3processed.csv")
-V5$chapter <- 2
+V5$chapter <- 3
 V5$level <- 5
 
 VIZ <- dplyr::bind_rows(V1,V2,V3,V4,V5)
@@ -41,17 +42,31 @@ PREPOST <- dplyr::select(PREPOST, ID, PreGeoSum, PostGeoSum, PrePostGeoGain)
 D1 <- dplyr::inner_join(PREPOST, VIZ, by = "ID")
 
 ```
-#Correlations
-
+#Exploratory Visualizations
 ```{r}
+#Correlogram
 COR <- D1
 COR$ID <- NULL
-COR$
+COR$chapter <- NULL
+COR$level <- NULL
+COR$BADGE_OPT <- NULL
+COR$LEVEL_ENDED <- NULL
 
-#Correlogram
 corrgram(COR, order=TRUE, lower.panel=panel.ellipse,
   upper.panel=panel.pts, text.panel=panel.txt,
-  diag.panel=panel.minmax) 
+  diag.panel=panel.minmax)
+
+#Boxplot
+BOX <- tidyr::gather(D1, "variable", "measures", 5:14)
+
+p1 <- ggplot(BOX, aes(measures, PrePostGeoGain))
+p1 + geom_boxplot() + facet_wrap(~variable, scales = "free") + theme(axis.text.x  = element_text(angle=60, vjust=0.5, size=7)) + xlab("")
+
+p2 <- ggplot(BOX, aes(measures, PreGeoSum))
+p2 + geom_boxplot() + facet_wrap(~variable, scales = "free") + theme(axis.text.x  = element_text(angle=60, vjust=0.5, size=7)) + xlab("")
+
+p3 <- ggplot(BOX, aes(measures, PostGeoSum))
+p3 + geom_boxplot() + facet_wrap(~variable, scales = "free") + theme(axis.text.x  = element_text(angle=60, vjust=0.5, size=7)) + xlab("")
 
 ```
 
